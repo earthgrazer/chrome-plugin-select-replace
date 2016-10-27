@@ -4,25 +4,39 @@ var dataListIdx = 0;
  * Replace the given <select> element with <input> <datalist> combo
  */
 function replaceSelect(node) {
+	var nodeJ = $(node);
+	
+	// Make sure we don't do the replacement more than once
+	// Don't apply to hidden select elements
+	if (nodeJ.hasClass('replacedWithInput') || nodeJ.is(':hidden')) {
+		return;
+	}
+	
 	var dataListId = 'dataList' + dataListIdx;
-	
-	// Copy over the options from <select>
 	var dataList = $('<datalist>').attr({id: dataListId});
-	$(node).children('option').each(function() {
-		dataList.append($('<option>').text($(this).text())
-					     .attr({value: $(this).attr('value')}));
-	})
+	var dataInput = $('<input>').attr({list: dataListId}).addClass('select');
 	
-	var dataInput = $('<input>').attr({list: dataListId});
-	// Make same selection in original <select> on change
-	dataInput.change(function() {
-		$(node).val(dataInput.val());
+	// Update datalist every time the input is selected
+	dataInput.focus(function() {
+		dataList.empty();
+	
+		// Copy over the options from <select>
+		nodeJ.children('option').each(function() {
+			dataList.append($('<option>').text($(this).attr('value'))
+						     .attr({value: $(this).text()}));
+		})
 	});
 	
-	$(node).after(dataInput)
-	       .after(dataList);
+	// Make same selection in original <select> on change
+	dataInput.on('input', function() {
+		nodeJ.val(dataList.find('[value="' + dataInput.val() + '"]').first().text());
+		node.dispatchEvent(new Event('change', {bubbles: true}));
+	});
 	
-	$(node).hide();
+	nodeJ.after(dataInput)
+	     .after(dataList);
+	// Tag the original list so we don't replace more than once
+	nodeJ.addClass('replacedWithInput');
 	dataListIdx++;
 }
 
@@ -39,10 +53,31 @@ function main() {
 		return;
 	}
 	
-	// Replace all <select> elements with <input> <datalist> combo
-	$('select').each(function() {
-		replaceSelect(this);
+	// Listen for changes to the DOM and apply replacement when <select> nodes are added
+	var config = {attributes: false, childList: true, characterData: false, subtree: true};
+	var observer = new MutationObserver(function(mutations) {
+		mutations.forEach(function(mutation) {
+			if (mutation.type != "childList") {
+				return;
+			}
+			
+			if (mutation.addedNodes.length <= 0) {
+				return;
+			}
+			
+			mutation.addedNodes.forEach(function(node) {
+				$(node).find('select').each(function() {
+					// Only do replacement for pop-up dialogs in JIRA
+					if ($(this).parents('.jira-dialog').length <= 0) {
+						return;
+					}
+					
+					replaceSelect(this);
+				});
+			});
+		});
 	});
+	observer.observe(document.body, config);
 };
 
 main();
