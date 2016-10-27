@@ -5,7 +5,7 @@ Chrome extension to replace drop-down menus with auto-complete lists
 Using Zephyr integration in JIRA was painful because test cycle selection was using `<select>` drop-down boxes, which are unsorted and can get crazy long. This extension replaces those `<select>` drop-downs with `<input>` lists backed by `<datalist>`, which allows free-form text input in the drop-down with auto-completion implemented by most modern browsers.
 
 ## Usage
-1. Download chrome_plugin_select_replace.crx
+1. Download **chrome_plugin_select_replace.crx**
 2. In Chrome browser, open chrome://extensions
 3. Drag the .crx file into page to install
 
