@@ -10,7 +10,7 @@ function replaceSelect(node) {
 	var dataList = $('<datalist>').attr({id: dataListId});
 	$(node).children('option').each(function() {
 		dataList.append($('<option>').text($(this).text())
-									 .attr({value: $(this).attr('value')}));
+					     .attr({value: $(this).attr('value')}));
 	})
 	
 	var dataInput = $('<input>').attr({list: dataListId});
@@ -20,7 +20,7 @@ function replaceSelect(node) {
 	});
 	
 	$(node).after(dataInput)
-		   .after(dataList);
+	       .after(dataList);
 	
 	$(node).hide();
 	dataListIdx++;
