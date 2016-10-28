@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "Auto-Complete DropDown Replacement",
 	"author": "Eric Chen",
-	"version": "0.0.2",
+	"version": "0.0.3",
 
 	"description": "Extension to replace drop-down menus with auto-complete lists.",
 	
