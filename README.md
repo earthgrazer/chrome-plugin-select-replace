@@ -28,3 +28,4 @@ In the "Add to Test Cycle(s)" dialog, each drop-down list has a replacement inpu
 
 ## Known Issues
 - Replacement lists are not scrollable in Chrome, so long lists may extend past the page boundaries
+- In cases where selecting one drop-down changes the list items for another drop-down, the replacement list may not be updated fast enough before gaining focus (**Workaround**: Wait for the affected drop-down to be updated first before switching focus to it)
