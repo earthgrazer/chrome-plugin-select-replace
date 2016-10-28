@@ -1,3 +1,6 @@
+// Limit replacement to select drop-downs with these IDs
+var inclNodeIds = ["project_version", "cycle_names"];
+
 var dataListIdx = 0;
 
 /**
@@ -6,9 +9,12 @@ var dataListIdx = 0;
 function replaceSelect(node) {
 	var nodeJ = $(node);
 	
+	// Only apply to select list of IDs
 	// Make sure we don't do the replacement more than once
 	// Don't apply to hidden select elements
-	if (nodeJ.hasClass('replacedWithInput') || nodeJ.is(':hidden')) {
+	if (inclNodeIds.indexOf(nodeJ.attr('id')) < 0 ||
+	    nodeJ.hasClass('replacedWithInput') || 
+	    nodeJ.is(':hidden')) {
 		return;
 	}
 	
@@ -22,14 +28,14 @@ function replaceSelect(node) {
 	
 		// Copy over the options from <select>
 		nodeJ.children('option').each(function() {
-			dataList.append($('<option>').text($(this).attr('value'))
-						     .attr({value: $(this).text()}));
+			dataList.append($('<option>').attr({value: $(this).text(), dataValue: $(this).attr('value')}));
 		})
 	});
 	
 	// Make same selection in original <select> on change
 	dataInput.on('input', function() {
-		nodeJ.val(dataList.find('[value="' + dataInput.val() + '"]').first().text());
+		console.log(dataInput.val());
+		nodeJ.val(dataList.find('[value="' + dataInput.val() + '"]').first().attr('dataValue'));
 		node.dispatchEvent(new Event('change', {bubbles: true}));
 	});
 	
